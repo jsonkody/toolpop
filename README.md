@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/toolpop.svg)](https://www.npmjs.com/package/toolpop)
 [![types](https://img.shields.io/npm/types/toolpop.svg)](https://www.npmjs.com/package/toolpop)
-[![license](https://img.shields.io/npm/l/toolpop.svg)](./LICENSE)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 [![GitHub](https://img.shields.io/badge/source-GitHub-181717?logo=github)](https://github.com/jsonkody/toolpop)
 
 A **very lightweight** Vue 3 `v-pop` directive for tooltips and headless image/tooltips.
