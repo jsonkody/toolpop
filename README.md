@@ -1,9 +1,15 @@
 # 💬 Toolpop
 
-[![npm version](https://img.shields.io/npm/v/toolpop.svg)](https://www.npmjs.com/package/toolpop)
 [![types](https://img.shields.io/npm/types/toolpop.svg)](https://www.npmjs.com/package/toolpop)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
-[![GitHub](https://img.shields.io/badge/source-GitHub-181717?logo=github)](https://github.com/jsonkody/toolpop)
+
+[Live Demo at StackBlitz](https://stackblitz.com/edit/toolpop?file=src%2FApp.vue)
+
+```ts
+<p v-pop="'Simple tooltip'">Hover me</p>
+```
+
+![screenshot](./screenshot.png)
 
 A **very lightweight** Vue 3 `v-pop` directive for tooltips and headless image/tooltips.
 
@@ -11,12 +17,6 @@ A **very lightweight** Vue 3 `v-pop` directive for tooltips and headless image/t
 - ✅ Automatically **stays visible** – flips to the other side if needed
 - ✅ Minimal setup – just `v-pop`, optionally with `:top`, `:right`, etc.
 - ✅ Reactive
-
-```ts
-<p v-pop="'Simple tooltip'">Hover me</p>
-```
-
-![screenshot](./screenshot.png)
 
 ## 📦 Installation
 
