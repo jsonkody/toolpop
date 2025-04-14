@@ -1,11 +1,13 @@
 {
   "name": "toolpop",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     }
@@ -13,7 +15,7 @@
   "scripts": {
     "build": "tsc",
     "psh": "git add -A && git commit -m \"saved & pushed by npm\" && git push",
-    "publish": "npm publish --access public"
+    "pub": "pnpm build && npm publish --access public"
   },
   "keywords": [
     "vue",
