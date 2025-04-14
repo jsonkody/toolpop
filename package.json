@@ -1,0 +1,40 @@
+{
+  "name": "toolpop",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "psh": "git add -A && git commit -m \"saved & pushed by npm\" && git push",
+    "publish": "npm publish --access public"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "tooltip",
+    "toolpop",
+    "directive",
+    "floating-ui",
+    "lightweight",
+    "custom"
+  ],
+  "author": "JsonKody",
+  "license": "MIT",
+  "dependencies": {
+    "@floating-ui/dom": "^1.6.13"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "typescript": "^5.8.3"
+  }
+}
