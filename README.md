@@ -8,8 +8,8 @@
 A **very lightweight** Vue 3 `v-pop` directive for tooltips and headless image/tooltips.
 
 ✅ **Only one dependency:** [Floating UI](https://floating-ui.com)
-✅ Minimal setup – just `v-pop`, optionally with `:top`, `:right`, etc.  
 ✅ Automatically **stays visible** – flips to the other side if needed  
+✅ Minimal setup – just `v-pop`, optionally with `:top`, `:right`, etc.  
 ✅ Perfect for icons, labels, or embedded images  
 ✅ Supports reactive strings, functions, `ref`, `computed`, even simple non-reactive HTML strings (good for images).  
 

@@ -36,5 +36,13 @@
   "devDependencies": {
     "@types/node": "^22.14.1",
     "typescript": "^5.8.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JsonKody/toolpop.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JsonKody/toolpop/issues"
+  },
+  "homepage": "https://github.com/JsonKody/toolpop#readme"
 }
