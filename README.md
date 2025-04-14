@@ -54,7 +54,7 @@ app.directive("gandalf", pop);
 ```
 
 ```html
-<p v-gandalf="'A wizard is never late...'">Text</p>
+<p v-gandalf="'A wizard is never late...'">Quote</p>
 ```
 
 ## As a plugin (auto-registration)

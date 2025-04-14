@@ -2,32 +2,32 @@
  * Usage:
  * v-pop:[top|right|bottom|left].[html]
  */
-import { computePosition, autoUpdate, flip, shift, offset, } from "@floating-ui/dom";
+import { computePosition, autoUpdate, flip, shift, offset, } from '@floating-ui/dom';
 const scale_from = 0.75;
 const time = 0.2;
 const origins = {
-    top: "bottom",
-    right: "left",
-    bottom: "top",
-    left: "right",
+    top: 'bottom',
+    right: 'left',
+    bottom: 'top',
+    left: 'right',
 };
 function unwrap(val) {
-    if (typeof val === "function") {
+    if (typeof val === 'function') {
         return unwrap(val());
     }
-    if (typeof val === "object" && val !== null && "value" in val) {
+    if (typeof val === 'object' && val !== null && 'value' in val) {
         return unwrap(val.value);
     }
-    return String(val ?? "");
+    return String(val ?? '');
 }
 export const pop = {
     mounted(el, binding) {
-        const placement = (binding.arg || "top");
-        const origin = origins[placement] || "top";
+        const placement = (binding.arg || 'top');
+        const origin = origins[placement] || 'top';
         const { click } = binding.modifiers;
         el._binding = binding;
         const createPopover = () => {
-            const popover = document.createElement("div");
+            const popover = document.createElement('div');
             const content = unwrap(el._binding?.value);
             if (el._binding?.modifiers.html) {
                 popover.innerHTML = content;
@@ -35,26 +35,27 @@ export const pop = {
             else {
                 popover.textContent = content;
                 popover.style.cssText += `
-          background-color: rgba(0, 0, 0, 0.7);
-          backdrop-filter: blur(14px);
-          color: white;
-          border-radius: 5px;
-          border: 1px solid rgba(255, 255, 255, 0.6);
-          padding: 1px 9px 0 9px;
-        `;
+           font-family: system-ui, sans-serif;
+           background-color: rgba(0, 0, 0, 0.7);
+           backdrop-filter: blur(14px);
+           color: white;
+           border-radius: 5px;
+           border: 1px solid rgba(255, 255, 255, 0.6);
+           padding: 1px 9px 0 9px;
+         `;
             }
             popover.style.cssText += `
-        transition: opacity ${time}s, transform ${time}s;
-        opacity: 0;
-        transform: scale(${scale_from});
-        transform-origin: ${origin};
-        pointer-events: none;
-        position: absolute;
-        font-size: 16px;
-        z-index: 999;
-        max-width: 42rem;
-        display: inline-block;
-      `;
+         transition: opacity ${time}s, transform ${time}s;
+         opacity: 0;
+         transform: scale(${scale_from});
+         transform-origin: ${origin};
+         pointer-events: none;
+         position: absolute;
+         font-size: 16px;
+         z-index: 999;
+         max-width: 42rem;
+         display: inline-block;
+       `;
             document.body.appendChild(popover);
             el._popover = popover;
         };
@@ -79,12 +80,12 @@ export const pop = {
             }).then(({ x, y, placement }) => {
                 popover.style.top = `${y}px`;
                 popover.style.left = `${x}px`;
-                popover.style.transformOrigin = origins[placement] || "top";
+                popover.style.transformOrigin = origins[placement] || 'top';
             });
             // Animate in
             requestAnimationFrame(() => {
-                popover.style.opacity = "1";
-                popover.style.transform = "scale(1)";
+                popover.style.opacity = '1';
+                popover.style.transform = 'scale(1)';
             });
             el._autoUpdateCleanup = autoUpdate(el, popover, () => {
                 computePosition(el, popover, {
@@ -93,7 +94,7 @@ export const pop = {
                 }).then(({ x, y, placement }) => {
                     popover.style.top = `${y}px`;
                     popover.style.left = `${x}px`;
-                    popover.style.transformOrigin = origins[placement] || "top";
+                    popover.style.transformOrigin = origins[placement] || 'top';
                 });
             });
         };
@@ -101,7 +102,7 @@ export const pop = {
             if (!el._popover)
                 return;
             const popover = el._popover;
-            popover.style.opacity = "0";
+            popover.style.opacity = '0';
             popover.style.transform = `scale(${scale_from})`;
             if (el._autoUpdateCleanup) {
                 el._autoUpdateCleanup();
@@ -116,16 +117,16 @@ export const pop = {
             showPopover();
         };
         if (!click) {
-            el.addEventListener("mouseenter", showPopover);
-            el.addEventListener("mouseleave", hidePopover);
+            el.addEventListener('mouseenter', showPopover);
+            el.addEventListener('mouseleave', hidePopover);
         }
         else {
-            el.addEventListener("click", clickHandler);
+            el.addEventListener('click', clickHandler);
         }
         el._removeEventListeners = () => {
-            el.removeEventListener("mouseenter", showPopover);
-            el.removeEventListener("mouseleave", hidePopover);
-            el.removeEventListener("click", clickHandler);
+            el.removeEventListener('mouseenter', showPopover);
+            el.removeEventListener('mouseleave', hidePopover);
+            el.removeEventListener('click', clickHandler);
         };
     },
     updated(el, binding) {
