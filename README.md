@@ -2,6 +2,8 @@
 
 💬 **Toolpop** is a lightweight Vue 3 `v-pop` directive for reactive tooltips and simple HTML/image popovers.
 
+[DEMO](https://toolpop.jsonkody.cz)
+
 [Live Demo on StackBlitz](https://stackblitz.com/edit/toolpop?file=src%2FApp.vue)
 
 ```html
@@ -76,6 +78,8 @@ app.directive("gandalf", pop);
 ---
 
 ## 💡 Example
+
+[DEMO](https://toolpop.jsonkody.cz)
 
 [Live Demo on StackBlitz](https://stackblitz.com/edit/toolpop?file=src%2FApp.vue)
 
