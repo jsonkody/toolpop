@@ -135,13 +135,13 @@ export const pop: ObjectDirective = {
       }
     };
 
-    if (!click || leave) {
-      el.addEventListener('mouseleave', hidePopover);
-    }
     if (!click) {
       el.addEventListener('mouseenter', showPopover);
     } else {
       el.addEventListener('click', clickHandler);
+    }
+    if (!click || leave) {
+      el.addEventListener('mouseleave', hidePopover);
     }
 
     el._removeEventListeners = () => {
