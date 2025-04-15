@@ -1,7 +1,3 @@
-/**
- * Usage:
- * v-pop:[top|right|bottom|left].[html]
- */
 import { computePosition, autoUpdate, flip, shift, offset, } from '@floating-ui/dom';
 const scale_from = 0.75;
 const time = 0.2;
@@ -24,7 +20,7 @@ export const pop = {
     mounted(el, binding) {
         const placement = (binding.arg || 'top');
         const origin = origins[placement] || 'top';
-        const { click } = binding.modifiers;
+        const { click, leave } = binding.modifiers;
         el._binding = binding;
         const createPopover = () => {
             const popover = document.createElement('div');
@@ -35,27 +31,27 @@ export const pop = {
             else {
                 popover.textContent = content;
                 popover.style.cssText += `
-           font-family: system-ui, sans-serif;
-           background-color: rgba(0, 0, 0, 0.7);
-           backdrop-filter: blur(14px);
-           color: white;
-           border-radius: 5px;
-           border: 1px solid rgba(255, 255, 255, 0.6);
-           padding: 1px 9px 0 9px;
-         `;
+            font-family: system-ui, sans-serif;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(14px);
+            color: white;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 1px 9px 0 9px;
+          `;
             }
             popover.style.cssText += `
-         transition: opacity ${time}s, transform ${time}s;
-         opacity: 0;
-         transform: scale(${scale_from});
-         transform-origin: ${origin};
-         pointer-events: none;
-         position: absolute;
-         font-size: 16px;
-         z-index: 999;
-         max-width: 42rem;
-         display: inline-block;
-       `;
+          transition: opacity ${time}s, transform ${time}s;
+          opacity: 0;
+          transform: scale(${scale_from});
+          transform-origin: ${origin};
+          pointer-events: none;
+          position: absolute;
+          font-size: 16px;
+          z-index: 999;
+          max-width: 42rem;
+          display: inline-block;
+        `;
             document.body.appendChild(popover);
             el._popover = popover;
         };
@@ -72,8 +68,6 @@ export const pop = {
             else {
                 popover.textContent = content;
             }
-            // const popover = el._popover!;
-            // // popover.textContent = unwrap(binding.value);
             computePosition(el, popover, {
                 placement,
                 middleware: [offset(8), flip(), shift({ padding: 8 })],
@@ -82,7 +76,6 @@ export const pop = {
                 popover.style.left = `${x}px`;
                 popover.style.transformOrigin = origins[placement] || 'top';
             });
-            // Animate in
             requestAnimationFrame(() => {
                 popover.style.opacity = '1';
                 popover.style.transform = 'scale(1)';
@@ -114,11 +107,18 @@ export const pop = {
             }, time * 1000);
         };
         const clickHandler = () => {
-            showPopover();
+            if (el._popover) {
+                hidePopover();
+            }
+            else {
+                showPopover();
+            }
         };
+        if (!click || leave) {
+            el.addEventListener('mouseleave', hidePopover);
+        }
         if (!click) {
             el.addEventListener('mouseenter', showPopover);
-            el.addEventListener('mouseleave', hidePopover);
         }
         else {
             el.addEventListener('click', clickHandler);
@@ -130,9 +130,6 @@ export const pop = {
         };
     },
     updated(el, binding) {
-        // if (el._popover && binding.value) {
-        //   el._popover.textContent = unwrap(binding.value);
-        // }
         el._binding = binding;
         if (el._popover) {
             const content = unwrap(binding.value);
@@ -149,6 +146,9 @@ export const pop = {
         if (el._popover) {
             el._popover.remove();
             el._popover = undefined;
+        }
+        if (el._hideTimeout) {
+            clearTimeout(el._hideTimeout);
         }
     },
 };

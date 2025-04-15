@@ -67,6 +67,8 @@ app.directive("gandalf", pop);
 
 - `top | right | bottom | left` – tooltip placement (default is `top`, so you can omit it)
 - `html` – interpret value as raw HTML (e.g. images or rich markup)
+- `click` – shows the tooltip on click instead of hover
+- `leave` – hides the tooltip on mouseleave (useful with `.click`)
 
 ---
 
@@ -93,6 +95,12 @@ Raw HTML image:
  const my_image = '<img src=https://bekinka.cz/images/logo_smile.webp>' -->
 
 <p v-pop.html="my_image">Image tooltip</p>
+```
+
+`.click` and `.leave`:
+```html
+<!-- Click-activated tooltip that hides on mouseleave -->
+<button v-pop.click.leave="'Click tooltip'">Click me</button>
 ```
 
 ---
