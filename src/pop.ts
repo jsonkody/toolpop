@@ -45,6 +45,7 @@ export const pop: ObjectDirective = {
     const createPopover = () => {
       const popover = document.createElement('div');
       const content = unwrap(el._binding?.value);
+      if (!content.trim()) return;
       if (el._binding?.modifiers.html) {
         popover.innerHTML = content;
       } else {
@@ -76,10 +77,11 @@ export const pop: ObjectDirective = {
     };
 
     const showPopover = () => {
+      const content = unwrap(el._binding?.value);
+      if (!content.trim()) return;
       if (el._hideTimeout) clearTimeout(el._hideTimeout);
       if (!el._popover) createPopover();
       const popover = el._popover!;
-      const content = unwrap(el._binding?.value);
       if (el._binding?.modifiers.html) {
         popover.innerHTML = content;
       } else {
