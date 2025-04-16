@@ -4,7 +4,7 @@
 
 [DEMO](https://toolpop.jsonkody.cz)
 
-[Live Demo on StackBlitz](https://stackblitz.com/edit/toolpop?file=src%2FApp.vue)
+[Live Demo on StackBlitz](https://stackblitz.com/github/JsonKody/toolpop_demo?file=src%2FApp.vue)
 
 ```html
 <p v-pop="'Simple tooltip'">Hover me</p>
@@ -81,7 +81,7 @@ app.directive("gandalf", pop);
 
 [DEMO](https://toolpop.jsonkody.cz)
 
-[Live Demo on StackBlitz](https://stackblitz.com/edit/toolpop?file=src%2FApp.vue)
+[Live Demo on StackBlitz](https://stackblitz.com/github/JsonKody/toolpop_demo?file=src%2FApp.vue)
 
 Simple static text:
 
