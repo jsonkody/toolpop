@@ -18,7 +18,8 @@
   "scripts": {
     "build": "tsc",
     "psh": "git add -A && git commit -m \"saved & pushed by npm\" && git push",
-    "pub": "pnpm psh && pnpm build && npm publish --access public"
+    "pub": "pnpm psh && pnpm build && npm publish --access public",
+    "publish": "npm publish --access public"
   },
   "keywords": [
     "vue",
