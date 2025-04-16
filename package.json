@@ -1,6 +1,6 @@
 {
   "name": "toolpop",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -44,10 +44,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/JsonKody/toolpop.git"
+    "url": "https://github.com/jsonkody/toolpop.git"
   },
   "bugs": {
-    "url": "https://github.com/JsonKody/toolpop/issues"
+    "url": "https://github.com/jsonkody/toolpop/issues"
   },
-  "homepage": "https://github.com/JsonKody/toolpop#readme"
+  "homepage": "https://github.com/jsonkody/toolpop#readme"
 }
