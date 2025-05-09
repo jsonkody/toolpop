@@ -154,36 +154,36 @@ export const pop: ObjectDirective = {
   },
 
   updated(el: ElWithPopover, binding: DirectiveBinding) {
-  el._binding = binding;
-  const content = unwrap(binding.value);
-  const isEmpty = !content.trim();
+    el._binding = binding;
+    const content = unwrap(binding.value);
+    const isEmpty = !content.trim();
 
-  if (el._popover) {
-    if (isEmpty) {
-      // nový obsah je prázdný → schovej tooltip
-      el._popover.remove();
-      el._popover = undefined;
-      if (el._autoUpdateCleanup) {
-        el._autoUpdateCleanup();
-        el._autoUpdateCleanup = undefined;
-      }
-    } else {
-      // aktualizuj obsah
-      if (binding.modifiers.html) {
-        el._popover.innerHTML = content;
+    if (el._popover) {
+      if (isEmpty) {
+        // nový obsah je prázdný → schovej tooltip
+        el._popover.remove();
+        el._popover = undefined;
+        if (el._autoUpdateCleanup) {
+          el._autoUpdateCleanup();
+          el._autoUpdateCleanup = undefined;
+        }
       } else {
-        el._popover.textContent = content;
+        // aktualizuj obsah
+        if (binding.modifiers.html) {
+          el._popover.innerHTML = content;
+        } else {
+          el._popover.textContent = content;
+        }
+      }
+    } else if (!isEmpty) {
+      // tooltip je skrytý, ale nový obsah není prázdný → zobraz, pokud je kurzor nad elementem
+      if (!binding.modifiers.click && el.matches(":hover")) {
+        // manuálně zavolej showPopover
+        const event = new Event("mouseenter");
+        el.dispatchEvent(event);
       }
     }
-  } else if (!isEmpty) {
-    // tooltip je skrytý, ale nový obsah není prázdný → zobraz, pokud je kurzor nad elementem
-    if (!binding.modifiers.click && el.matches(':hover')) {
-      // manuálně zavolej showPopover
-      const event = new Event('mouseenter');
-      el.dispatchEvent(event);
-    }
-  }
-},
+  },
 
   beforeUnmount(el: ElWithPopover) {
     el._removeEventListeners?.();

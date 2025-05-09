@@ -1,2 +1,2 @@
-import type { ObjectDirective } from 'vue';
+import type { ObjectDirective } from "vue";
 export declare const pop: ObjectDirective;
