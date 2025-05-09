@@ -5,26 +5,26 @@ import {
   flip,
   shift,
   offset,
-} from '@floating-ui/dom';
-import type { DirectiveBinding, ObjectDirective } from 'vue';
+} from "@floating-ui/dom";
+import type { DirectiveBinding, ObjectDirective } from "vue";
 
 const scale_from = 0.75;
 const time = 0.2;
 const origins: Record<string, string> = {
-  top: 'bottom',
-  right: 'left',
-  bottom: 'top',
-  left: 'right',
+  top: "bottom",
+  right: "left",
+  bottom: "top",
+  left: "right",
 };
 
 function unwrap(val: any): string {
-  if (typeof val === 'function') {
+  if (typeof val === "function") {
     return unwrap(val());
   }
-  if (typeof val === 'object' && val !== null && 'value' in val) {
+  if (typeof val === "object" && val !== null && "value" in val) {
     return unwrap(val.value);
   }
-  return String(val ?? '');
+  return String(val ?? "");
 }
 
 type ElWithPopover = HTMLElement & {
@@ -37,13 +37,13 @@ type ElWithPopover = HTMLElement & {
 
 export const pop: ObjectDirective = {
   mounted(el: ElWithPopover, binding: DirectiveBinding) {
-    const placement = (binding.arg || 'top') as Placement;
-    const origin = origins[placement] || 'top';
+    const placement = (binding.arg || "top") as Placement;
+    const origin = origins[placement] || "top";
     const { click, leave } = binding.modifiers;
     el._binding = binding;
 
     const createPopover = () => {
-      const popover = document.createElement('div');
+      const popover = document.createElement("div");
       const content = unwrap(el._binding?.value);
       if (!content.trim()) return;
       if (el._binding?.modifiers.html) {
@@ -94,12 +94,12 @@ export const pop: ObjectDirective = {
       }).then(({ x, y, placement }) => {
         popover.style.top = `${y}px`;
         popover.style.left = `${x}px`;
-        popover.style.transformOrigin = origins[placement] || 'top';
+        popover.style.transformOrigin = origins[placement] || "top";
       });
 
       requestAnimationFrame(() => {
-        popover.style.opacity = '1';
-        popover.style.transform = 'scale(1)';
+        popover.style.opacity = "1";
+        popover.style.transform = "scale(1)";
       });
 
       el._autoUpdateCleanup = autoUpdate(el, popover, () => {
@@ -109,7 +109,7 @@ export const pop: ObjectDirective = {
         }).then(({ x, y, placement }) => {
           popover.style.top = `${y}px`;
           popover.style.left = `${x}px`;
-          popover.style.transformOrigin = origins[placement] || 'top';
+          popover.style.transformOrigin = origins[placement] || "top";
         });
       });
     };
@@ -117,7 +117,7 @@ export const pop: ObjectDirective = {
     const hidePopover = () => {
       if (!el._popover) return;
       const popover = el._popover;
-      popover.style.opacity = '0';
+      popover.style.opacity = "0";
       popover.style.transform = `scale(${scale_from})`;
       if (el._autoUpdateCleanup) {
         el._autoUpdateCleanup();
@@ -138,32 +138,52 @@ export const pop: ObjectDirective = {
     };
 
     if (!click) {
-      el.addEventListener('mouseenter', showPopover);
+      el.addEventListener("mouseenter", showPopover);
     } else {
-      el.addEventListener('click', clickHandler);
+      el.addEventListener("click", clickHandler);
     }
     if (!click || leave) {
-      el.addEventListener('mouseleave', hidePopover);
+      el.addEventListener("mouseleave", hidePopover);
     }
 
     el._removeEventListeners = () => {
-      el.removeEventListener('mouseenter', showPopover);
-      el.removeEventListener('mouseleave', hidePopover);
-      el.removeEventListener('click', clickHandler);
+      el.removeEventListener("mouseenter", showPopover);
+      el.removeEventListener("mouseleave", hidePopover);
+      el.removeEventListener("click", clickHandler);
     };
   },
 
   updated(el: ElWithPopover, binding: DirectiveBinding) {
-    el._binding = binding;
-    if (el._popover) {
-      const content = unwrap(binding.value);
+  el._binding = binding;
+  const content = unwrap(binding.value);
+  const isEmpty = !content.trim();
+
+  if (el._popover) {
+    if (isEmpty) {
+      // nový obsah je prázdný → schovej tooltip
+      el._popover.remove();
+      el._popover = undefined;
+      if (el._autoUpdateCleanup) {
+        el._autoUpdateCleanup();
+        el._autoUpdateCleanup = undefined;
+      }
+    } else {
+      // aktualizuj obsah
       if (binding.modifiers.html) {
         el._popover.innerHTML = content;
       } else {
         el._popover.textContent = content;
       }
     }
-  },
+  } else if (!isEmpty) {
+    // tooltip je skrytý, ale nový obsah není prázdný → zobraz, pokud je kurzor nad elementem
+    if (!binding.modifiers.click && el.matches(':hover')) {
+      // manuálně zavolej showPopover
+      const event = new Event('mouseenter');
+      el.dispatchEvent(event);
+    }
+  }
+},
 
   beforeUnmount(el: ElWithPopover) {
     el._removeEventListeners?.();
