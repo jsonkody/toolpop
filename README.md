@@ -43,17 +43,38 @@ npm install toolpop
 import Toolpop from "toolpop";
 // ...
 app.use(Toolpop);
-// Registers v-pop globally
+// Registers v-pop globally with default options
+```
+
+With options:
+
+```ts
+// main.ts
+import Toolpop from "toolpop";
+// ...
+// main.ts
+app.use(Toolpop, {
+  fontSize: 14,
+  duration: 0.15,
+  color: "white",
+  backgroundColor: "rgba(0, 0, 0, 0.7)",
+  borderColor: "rgba(255, 255, 255, 0.28)",
+  borderRadius: 6,
+  scaleStart: 0.75,
+});
 ```
 
 ## ✒️ Use as Directive
 
 ```ts
 // main.ts
-import { pop } from "toolpop";
-// ...
-app.directive("pop", pop); // name "pop" whatever you want
+import { createPop } from "toolpop";
+
 // Registers v-pop globally
+app.directive("pop", createPop()); // name "pop" whatever you want
+
+// .. or with options - every option is optional, so you may pass only what you need
+app.directive("pop", createPop({ color: "orange" }));
 ```
 
 You can also rename it:
@@ -64,6 +85,22 @@ app.directive("gandalf", pop);
 
 ```html
 <p v-gandalf="'A wizard is never late...'">Quote</p>
+```
+
+---
+
+## ✏️ Options
+
+```ts
+interface PopOptions {
+  fontSize: number
+  duration: number
+  color: string
+  backgroundColor: string
+  borderColor: string
+  borderRadius: number
+  scaleStart: number
+}
 ```
 
 ---
