@@ -1,8 +1,9 @@
-import { pop } from "./pop";
+import { createPop, type PopOptions } from "./pop";
 import type { App } from "vue";
 
 export default {
-  install(app: App) {
-    app.directive("pop", pop);
+  install(app: App, options?: Partial<PopOptions>) {
+    const configuredPopDirective = createPop(options);
+    app.directive("pop", configuredPopDirective);
   },
 };

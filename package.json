@@ -32,14 +32,14 @@
   "author": "JsonKody",
   "license": "MIT",
   "dependencies": {
-    "@floating-ui/dom": "^1.6.13"
+    "@floating-ui/dom": "^1.7.4"
   },
   "peerDependencies": {
     "vue": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22.14.1",
-    "typescript": "^5.8.3"
+    "@types/node": "^24.5.1",
+    "typescript": "^5.9.2"
   },
   "repository": {
     "type": "git",
