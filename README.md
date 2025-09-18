@@ -1,6 +1,6 @@
 # 💬 Toolpop
 
-## ✨🎨✨ **NEW!** You can now fully customize the tooltip's appearance!
+### ✨🎨✨ **NEW!** You can now fully customize the tooltip's appearance!
 
 💬 **Toolpop** is a lightweight Vue 3 `v-pop` directive for reactive tooltips and simple HTML/image popovers.
 
@@ -42,9 +42,9 @@ npm install toolpop
 
 ```ts
 // main.ts
-import Toolpop from "toolpop";
+import Toolpop from 'toolpop'
 // ...
-app.use(Toolpop);
+app.use(Toolpop)
 // Registers v-pop globally with default options
 ```
 
@@ -52,7 +52,7 @@ With options:
 
 ```ts
 // main.ts
-import Toolpop from "toolpop";
+import Toolpop from 'toolpop'
 // ...
 // main.ts
 app.use(Toolpop, {
@@ -60,31 +60,32 @@ app.use(Toolpop, {
   paddingX: 10,
   paddingY: 0,
   duration: 0.15,
-  color: "white",
-  backgroundColor: "rgba(0, 0, 0, 0.7)",
-  borderColor: "rgba(255, 255, 255, 0.28)",
+  fontFamily: 'system-ui, sans-serif',
+  color: 'white',
+  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  borderColor: 'rgba(255, 255, 255, 0.28)',
   borderRadius: 6,
   scaleStart: 0.75,
-});
+})
 ```
 
 ## ✒️ Use as Directive
 
 ```ts
 // main.ts
-import { createPop } from "toolpop";
+import { createPop } from 'toolpop'
 
 // Registers v-pop globally
-app.directive("pop", createPop()); // name "pop" whatever you want
+app.directive('pop', createPop()) // name "pop" whatever you want
 
 // .. or with options - every option is optional, so you may pass only what you need
-app.directive("pop", createPop({ color: "orange" }));
+app.directive('pop', createPop({ color: 'orange' }))
 ```
 
 You can also rename it:
 
 ```ts
-app.directive("gandalf", pop);
+app.directive('gandalf', pop)
 ```
 
 ```html
@@ -101,6 +102,7 @@ interface PopOptions {
   paddingX: number
   paddingY: number
   duration: number
+  fontFamily: string
   color: string
   backgroundColor: string
   borderColor: string
@@ -163,8 +165,8 @@ Raw HTML image:
 Copy `src/pop.ts` into your project and register locally:
 
 ```ts
-import { pop } from "@/directives/pop"; // path where you put it ...
-app.directive("pop", pop); // name "pop" whatever you want
+import { pop } from '@/directives/pop' // path where you put it ...
+app.directive('pop', pop) // name "pop" whatever you want
 ```
 
 ---
