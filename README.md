@@ -1,5 +1,7 @@
 # 💬 Toolpop
 
+> ✨🎨✨ <span style="color: limegreen">**NEW!**</span> You can now fully customize the tooltip's appearance!
+
 💬 **Toolpop** is a lightweight Vue 3 `v-pop` directive for reactive tooltips and simple HTML/image popovers.
 
 [DEMO](https://toolpop.jsonkody.cz)
@@ -93,13 +95,13 @@ app.directive("gandalf", pop);
 
 ```ts
 interface PopOptions {
-  fontSize: number
-  duration: number
-  color: string
-  backgroundColor: string
-  borderColor: string
-  borderRadius: number
-  scaleStart: number
+  fontSize: number;
+  duration: number;
+  color: string;
+  backgroundColor: string;
+  borderColor: string;
+  borderRadius: number;
+  scaleStart: number;
 }
 ```
 
