@@ -10,6 +10,8 @@ import type { DirectiveBinding, ObjectDirective } from "vue";
 
 export interface PopOptions {
   fontSize: number;
+  paddingX: number;
+  paddingY: number;
   duration: number;
   color: string;
   backgroundColor: string;
@@ -20,6 +22,8 @@ export interface PopOptions {
 
 const defaultOptions: PopOptions = {
   fontSize: 14,
+  paddingX: 10,
+  paddingY: 0,
   duration: 0.15,
   color: "white",
   backgroundColor: "rgba(0, 0, 0, 0.7)",
@@ -87,7 +91,7 @@ export function createPop(
             color: ${finalOptions.color};
             border-radius: ${finalOptions.borderRadius}px;
             border: 1px solid ${finalOptions.borderColor};
-            padding: 0 10px;
+            padding: ${finalOptions.paddingY} ${finalOptions.paddingX}px;
           `;
         }
         popover.style.cssText += `

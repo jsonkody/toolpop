@@ -96,6 +96,8 @@ app.directive("gandalf", pop);
 ```ts
 interface PopOptions {
   fontSize: number;
+  paddingX: number;
+  paddingY: number;
   duration: number;
   color: string;
   backgroundColor: string;
