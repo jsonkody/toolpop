@@ -57,6 +57,8 @@ import Toolpop from "toolpop";
 // main.ts
 app.use(Toolpop, {
   fontSize: 14,
+  paddingX: 10,
+  paddingY: 0,
   duration: 0.15,
   color: "white",
   backgroundColor: "rgba(0, 0, 0, 0.7)",
@@ -95,15 +97,15 @@ app.directive("gandalf", pop);
 
 ```ts
 interface PopOptions {
-  fontSize: number;
-  paddingX: number;
-  paddingY: number;
-  duration: number;
-  color: string;
-  backgroundColor: string;
-  borderColor: string;
-  borderRadius: number;
-  scaleStart: number;
+  fontSize: number
+  paddingX: number
+  paddingY: number
+  duration: number
+  color: string
+  backgroundColor: string
+  borderColor: string
+  borderRadius: number
+  scaleStart: number
 }
 ```
 
