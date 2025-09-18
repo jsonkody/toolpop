@@ -1,6 +1,6 @@
 {
   "name": "toolpop",
-  "version": "1.0.1",
+  "version": "0.3.2",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "publish": "pnpm build && npm publish --access public"
+    "prepublishOnly": "pnpm build"
   },
   "keywords": [
     "vue",
