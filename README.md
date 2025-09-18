@@ -1,6 +1,6 @@
 # 💬 Toolpop
 
-> ✨🎨✨ <span style="color: limegreen">**NEW!**</span> You can now fully customize the tooltip's appearance!
+## ✨🎨✨ **NEW!** You can now fully customize the tooltip's appearance!
 
 💬 **Toolpop** is a lightweight Vue 3 `v-pop` directive for reactive tooltips and simple HTML/image popovers.
 
