@@ -1,8 +1,16 @@
 # 💬 Toolpop
 
+💬 **Toolpop** is a lightweight Vue 3 `v-pop` directive for reactive tooltips and simple HTML/image popovers.
+
 ### ✨🎨✨ **NEW!** You can now fully customize the tooltip's appearance!
 
-💬 **Toolpop** is a lightweight Vue 3 `v-pop` directive for reactive tooltips and simple HTML/image popovers.
+> [!CAUTION]
+> 🚨 Beware of breaking change - if you used toolpop as library you need to change pop -> createPop() in main.ts
+
+```diff
+- import { pop } from 'toolpop'
++ import { createPop } from 'toolpop'
+```
 
 [DEMO](https://toolpop.jsonkody.cz)
 
@@ -68,7 +76,6 @@ app.use(Toolpop, {
   scaleStart: 0.75,
   blur: 14,
 })
-// Note: These are the default options, showing their initial values.
 ```
 
 ## ✒️ Use as Directive
@@ -112,6 +119,23 @@ interface PopOptions {
   scaleStart: number
   blur: number
 }
+```
+
+For typed custom options when registering the directive manually:
+
+
+```ts
+import { createPop, type PopOptions } from 'toolpop'
+
+const options: Partial<PopOptions> = {
+  fontSize: 28,
+  paddingX: 15,
+  paddingY: 4,
+  blur: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.1)',
+}
+
+app.directive('pop', createPop(options))
 ```
 
 ---
