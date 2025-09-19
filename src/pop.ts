@@ -19,6 +19,7 @@ export interface PopOptions {
   borderColor: string
   borderRadius: number
   scaleStart: number
+  blur: number
 }
 
 const defaultOptions: PopOptions = {
@@ -32,6 +33,7 @@ const defaultOptions: PopOptions = {
   borderColor: 'rgba(255, 255, 255, 0.28)',
   borderRadius: 6,
   scaleStart: 0.75,
+  blur: 14,
 }
 
 export type Origin = 'top' | 'bottom' | 'left' | 'right'
@@ -89,7 +91,7 @@ export function createPop(
           popover.style.cssText += `
             font-family: ${finalOptions.fontFamily};
             background-color: ${finalOptions.backgroundColor};
-            backdrop-filter: blur(14px);
+            backdrop-filter: blur(${finalOptions.blur}px);
             color: ${finalOptions.color};
             border-radius: ${finalOptions.borderRadius}px;
             border: 1px solid ${finalOptions.borderColor};

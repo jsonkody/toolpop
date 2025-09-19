@@ -66,6 +66,7 @@ app.use(Toolpop, {
   borderColor: 'rgba(255, 255, 255, 0.28)',
   borderRadius: 6,
   scaleStart: 0.75,
+  blur: 14,
 })
 ```
 
@@ -108,6 +109,7 @@ interface PopOptions {
   borderColor: string
   borderRadius: number
   scaleStart: number
+  blur: number
 }
 ```
 
