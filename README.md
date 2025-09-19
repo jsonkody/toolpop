@@ -18,6 +18,7 @@
 > + import { createPop } from 'toolpop'
 > + app.directive('pop', createPop())
 > ```
+If you 🧩 Use as Plugin, you are ok - no change.
 
 [DEMO](https://toolpop.jsonkody.cz)
 
@@ -199,8 +200,8 @@ Raw HTML image:
 Copy `src/pop.ts` into your project and register locally:
 
 ```ts
-import { pop } from '@/directives/pop' // path where you put it ...
-app.directive('pop', pop) // name "pop" whatever you want
+import { createPop } from '@/directives/pop' // path where you put it ...
+app.directive('pop', createPop()) // name "pop" whatever you want
 ```
 
 ---
