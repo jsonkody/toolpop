@@ -24,13 +24,13 @@ export interface PopOptions {
 
 const defaultOptions: PopOptions = {
   fontSize: 14,
-  paddingX: 10,
+  paddingX: 8,
   paddingY: 0,
   duration: 0.15,
-  fontFamily: 'system-ui, sans-serif',
-  color: 'white',
-  backgroundColor: 'rgba(0, 0, 0, 0.7)',
-  borderColor: 'rgba(255, 255, 255, 0.28)',
+  fontFamily: "system-ui, sans-serif",
+  color: "white",
+  backgroundColor: "rgba(0, 0, 0, 0.7)",
+  borderColor: "rgba(255, 255, 255, 0.28)",
   borderRadius: 6,
   scaleStart: 0.75,
   blur: 14,

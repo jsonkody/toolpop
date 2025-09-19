@@ -57,7 +57,7 @@ import Toolpop from 'toolpop'
 // main.ts
 app.use(Toolpop, {
   fontSize: 14,
-  paddingX: 10,
+  paddingX: 8,
   paddingY: 0,
   duration: 0.15,
   fontFamily: 'system-ui, sans-serif',
@@ -68,6 +68,7 @@ app.use(Toolpop, {
   scaleStart: 0.75,
   blur: 14,
 })
+// btw those are default options, so you know what values they have ;)
 ```
 
 ## ✒️ Use as Directive
