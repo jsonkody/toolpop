@@ -5,12 +5,19 @@
 ### ✨🎨✨ **NEW!** You can now fully customize the tooltip's appearance!
 
 > [!CAUTION]
-> 🚨 Beware of breaking change - if you used toolpop as library you need to change pop -> createPop() in main.ts
-
-```diff
-- import { pop } from 'toolpop'
-+ import { createPop } from 'toolpop'
-```
+> 
+> 🚨 Breaking change 🚨
+>
+> The method for manually registering the ✒️ directive has changed. You now need to import and call `createPop()`.
+>
+> ```diff
+> // main.ts
+> - import { pop } from 'toolpop'
+> - app.directive('pop', pop)
+>
+> + import { createPop } from 'toolpop'
+> + app.directive('pop', createPop())
+> ```
 
 [DEMO](https://toolpop.jsonkody.cz)
 
