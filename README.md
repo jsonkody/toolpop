@@ -2,27 +2,9 @@
 
 💬 **Toolpop** is a lightweight Vue 3 `v-pop` directive for reactive tooltips and simple HTML/image popovers.
 
-### ✨🎨✨ **NEW!** You can now fully customize the tooltip's appearance!
+✨🎨 **Fully customizable** tooltip appearance with extensive styling options!
 
-> [!CAUTION]
-> 
-> 🚨 Breaking change 🚨
->
-> The method for manually registering the ✒️ directive has changed. You now need to import and call `createPop()`.
->
-> ```diff
-> // main.ts
-> - import { pop } from 'toolpop'
-> - app.directive('pop', pop)
->
-> + import { createPop } from 'toolpop'
-> + app.directive('pop', createPop())
-> ```
-If you 🧩 Use as Plugin, you are ok - no change.
-
-[DEMO](https://toolpop.jsonkody.cz)
-
-[Live Demo on StackBlitz](https://stackblitz.com/github/JsonKody/toolpop_demo?file=src%2FApp.vue)
+[DEMO](https://toolpop.jsonkody.cz) | [Live Demo on StackBlitz](https://stackblitz.com/github/JsonKody/toolpop_demo?file=src%2FApp.vue)
 
 ```html
 <p v-pop="'Simple tooltip'">Hover me</p>
@@ -70,7 +52,6 @@ With options:
 // main.ts
 import Toolpop from 'toolpop'
 // ...
-// main.ts
 app.use(Toolpop, {
   fontSize: 14,
   paddingX: 8,
@@ -102,11 +83,29 @@ app.directive('pop', createPop({ color: 'orange' }))
 You can also rename it:
 
 ```ts
-app.directive('gandalf', pop)
+app.directive('gandalf', createPop())
 ```
 
 ```html
 <p v-gandalf="'A wizard is never late...'">Quote</p>
+```
+
+---
+
+## ⚙️ Props & Modifiers
+
+**Props** (placement):
+- `:top`, `:right`, `:bottom`, `:left` – tooltip placement (`:top` is default, so you can omit it)
+
+**Modifiers**:
+- `.html` – interpret value as raw HTML (e.g. images or rich markup)
+- `.click` – shows the tooltip on click instead of hover
+- `.leave` – hides the tooltip on mouseleave (only useful with `.click`)
+
+Example combining prop and modifier:
+
+```html
+<button v-pop:right.click="'Click me!'">Right-side click tooltip</button>
 ```
 
 ---
@@ -131,7 +130,6 @@ interface PopOptions {
 
 For typed custom options when registering the directive manually:
 
-
 ```ts
 import { createPop, type PopOptions } from 'toolpop'
 
@@ -148,20 +146,7 @@ app.directive('pop', createPop(options))
 
 ---
 
-## ⚙️ Modifiers
-
-- `top`, `right`, `bottom`, `left` – tooltip placement (`top` is default, so you can omit it)
-- `html` – interpret value as raw HTML (e.g. images or rich markup)
-- `click` – shows the tooltip on click instead of hover
-  - `leave` – hides the tooltip on mouseleave (only useful with `.click`)
-
----
-
 ## 💡 Example
-
-[DEMO](https://toolpop.jsonkody.cz)
-
-[Live Demo on StackBlitz](https://stackblitz.com/github/JsonKody/toolpop_demo?file=src%2FApp.vue)
 
 Simple static text:
 
@@ -190,7 +175,7 @@ Raw HTML image:
 
 ```html
 <!-- Click-activated tooltip that hides on mouseleave -->
-<button v-pop.click.leave="'Click tooltip'">Click me</button>
+<button v-pop:right.click.leave="'Click tooltip'">Click me</button>
 ```
 
 ---
