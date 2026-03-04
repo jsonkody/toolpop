@@ -2,42 +2,49 @@
 
 💬 **Toolpop** is a lightweight Vue 3 `v-pop` directive for reactive tooltips and simple HTML/image popovers.
 
-✨🎨 **Fully customizable** tooltip appearance with extensive styling options!
-
 [DEMO](https://toolpop.jsonkody.cz) | [Live Demo on StackBlitz](https://stackblitz.com/github/JsonKody/toolpop_demo?file=src%2FApp.vue)
 
+## 🔥 Quick Usage
+
+Drop it into your Vue template easily:
+
 ```html
+
 <p v-pop="'Simple tooltip'">Hover me</p>
+
+
+<button v-pop="`Count: ${count}`" @click="count++">Click me</button>
+
+
+<button v-pop.click.html="'<strong>Bold</strong> text'">Click me</button>
+
+
+<button v-pop:bottom-start="'Aligned to start'">Bottom Start</button>
 ```
 
 ![screenshot](./screenshot.png)
 
-- 🎁 **tiny - only 1 dependency:** [@floating-ui/dom
-  ](https://www.npmjs.com/package/@floating-ui/dom) [(web)](https://floating-ui.com)
-- ✨ Auto-flipping + positioning with `top`, `right`, etc.
+✨🎨 **Fully customizable** tooltip appearance with extensive styling options!
+
+- 🎁 **tiny - only 1 dependency:** [@floating-ui/dom](https://www.npmjs.com/package/@floating-ui/dom) [(web)](https://floating-ui.com)
+- ✨ Auto-flipping + positioning with `top`, `bottom-start`, `right-end`, etc.
 - ⚡ Supports reactive values, `ref`, `computed`, functions
 - 🧩 Optional HTML/image mode via `.html`
 
 ---
 
-## 🚀 Installation
+## 🚀 Installation & Setup
 
 with **pnpm**:
-
 ```sh
 pnpm add toolpop
 ```
-
 with **npm**:
-
 ```sh
 npm install toolpop
 ```
 
----
-
-## 🧩 Use as Plugin
-
+### 🧩 Use as Plugin
 ```ts
 // main.ts
 import Toolpop from 'toolpop'
@@ -46,67 +53,33 @@ app.use(Toolpop)
 // Registers v-pop globally with default options
 ```
 
-With options:
-
-```ts
-// main.ts
-import Toolpop from 'toolpop'
-// ...
-app.use(Toolpop, {
-  fontSize: 14,
-  paddingX: 8,
-  paddingY: 0,
-  duration: 0.15,
-  fontFamily: 'system-ui, sans-serif',
-  color: 'white',
-  backgroundColor: 'rgba(0, 0, 0, 0.7)',
-  borderColor: 'rgba(255, 255, 255, 0.28)',
-  borderRadius: 6,
-  scaleStart: 0.75,
-  blur: 14,
-})
-```
-
-## ✒️ Use as Directive
-
+### ✒️ Use as Directive
 ```ts
 // main.ts
 import { createPop } from 'toolpop'
 
 // Registers v-pop globally
 app.directive('pop', createPop()) // name "pop" whatever you want
-
-// .. or with options - every option is optional, so you may pass only what you need
-app.directive('pop', createPop({ color: 'orange' }))
-```
-
-You can also rename it:
-
-```ts
-app.directive('gandalf', createPop())
-```
-
-```html
-<p v-gandalf="'A wizard is never late...'">Quote</p>
 ```
 
 ---
 
 ## ⚙️ Props & Modifiers
 
-**Props** (placement):
-- `:top`, `:right`, `:bottom`, `:left` – tooltip placement (`:top` is default, so you can omit it)
+### Placements (Props)
+You can control the placement using directive arguments (e.g., `v-pop:right`):
 
-**Modifiers**:
-- `.html` – interpret value as raw HTML (e.g. images or rich markup)
-- `.click` – shows the tooltip on click instead of hover
-- `.leave` – hides the tooltip on mouseleave (only useful with `.click`)
+| Placement | Description | Example |
+| :--- | :--- | :--- |
+| **`:top`** | Above the element (Default) | `v-pop="'Text'"` |
+| **`:bottom`, `:left`, `:right`** | Centered on the specified side | `v-pop:bottom="'Text'"` |
+| **`-start`** suffix | Aligns tooltip to the start of the element | `v-pop:top-start="'Text'"` |
+| **`-end`** suffix | Aligns tooltip to the end of the element | `v-pop:right-end="'Text'"` |
 
-Example combining prop and modifier:
-
-```html
-<button v-pop:right.click="'Click me!'">Right-side click tooltip</button>
-```
+### Behavior Modifiers
+- **`.html`** – interpret value as raw HTML (e.g. images or rich markup)
+- **`.click`** – shows the tooltip on click instead of hover
+- **`.leave`** – hides the tooltip on mouseleave (only useful with `.click`)
 
 ---
 
@@ -129,7 +102,6 @@ interface PopOptions {
 ```
 
 For typed custom options when registering the directive manually:
-
 ```ts
 import { createPop, type PopOptions } from 'toolpop'
 
@@ -146,53 +118,17 @@ app.directive('pop', createPop(options))
 
 ---
 
-## 💡 Example
-
-Simple static text:
-
-```html
-<p v-pop="'Hello world!'">Hover me</p>
-<!-- You need to insert string, or function that return string -->
-<!-- Or Vue reactive value as ref, computed ... -->
-```
-
-Reactive value:
-
-```html
-<button v-pop="`Count: ${count}`" @click="count++">Click me</button>
-```
-
-Raw HTML image:
-
-```html
-<!-- in JS store
- const my_image = '<img src=https://bekinka.cz/images/logo_smile.webp>' -->
-
-<p v-pop.html="my_image">Image tooltip</p>
-```
-
-`.click` and `.leave`:
-
-```html
-<!-- Click-activated tooltip that hides on mouseleave -->
-<button v-pop:right.click.leave="'Click tooltip'">Click me</button>
-```
-
----
-
 ## 📁 Local use (optional)
 
 Copy `src/pop.ts` into your project and register locally:
-
 ```ts
 import { createPop } from '@/directives/pop' // path where you put it ...
-app.directive('pop', createPop()) // name "pop" whatever you want
+app.directive('pop', createPop())
 ```
 
 ---
 
 ## 🌍 Live Projects
-
 - [jsonkody.cz](https://jsonkody.cz)
 - [num.jsonkody.cz](https://num.jsonkody.cz)
 - [snejk.bekinka.cz](https://snejk.bekinka.cz)
@@ -200,5 +136,4 @@ app.directive('pop', createPop()) // name "pop" whatever you want
 ---
 
 ## 🪪 License
-
-[MIT](https://github.com/jsonkody/toolpop/blob/main/LICENSE) © 2025 [JsonKody](https://github.com/jsonkody)
+[MIT](https://github.com/jsonkody/toolpop/blob/main/LICENSE) © 2026 [JsonKody](https://github.com/jsonkody)

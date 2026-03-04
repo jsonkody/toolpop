@@ -5,24 +5,24 @@ import {
   flip,
   shift,
   offset,
-} from '@floating-ui/dom'
-import type { DirectiveBinding, ObjectDirective } from 'vue'
+} from "@floating-ui/dom";
+import type { DirectiveBinding, ObjectDirective } from "vue";
 
 export interface PopOptions {
-  fontSize: number
-  paddingX: number
-  paddingY: number
-  duration: number
-  fontFamily: string
-  color: string
-  backgroundColor: string
-  borderColor: string
-  borderRadius: number
-  scaleStart: number
-  blur: number
+  fontSize: number;
+  paddingX: number;
+  paddingY: number;
+  duration: number;
+  fontFamily: string;
+  color: string;
+  backgroundColor: string;
+  borderColor: string;
+  borderRadius: number;
+  scaleStart: number;
+  blur: number;
 }
 
-const defaultOptions: PopOptions = {
+const default_options: PopOptions = {
   fontSize: 14,
   paddingX: 8,
   paddingY: 0,
@@ -34,204 +34,218 @@ const defaultOptions: PopOptions = {
   borderRadius: 6,
   scaleStart: 0.75,
   blur: 14,
-}
-
-export type Origin = 'top' | 'bottom' | 'left' | 'right'
-
-const origins: Record<string, Origin> = {
-  top: 'bottom',
-  right: 'left',
-  bottom: 'top',
-  left: 'right',
-}
+};
 
 function unwrap(val: any): string {
-  if (typeof val === 'function') {
-    return unwrap(val())
+  if (typeof val === "function") {
+    return unwrap(val());
   }
-  if (typeof val === 'object' && val !== null && 'value' in val) {
-    return unwrap(val.value)
+  if (typeof val === "object" && val !== null && "value" in val) {
+    return unwrap(val.value);
   }
-  return String(val ?? '')
+  return String(val ?? "");
 }
 
 type ElWithPopover = HTMLElement & {
-  _popover?: HTMLDivElement
-  _binding?: DirectiveBinding
-  _hideTimeout?: number
-  _autoUpdateCleanup?: () => void
-  _removeEventListeners?: () => void
+  _popover?: HTMLDivElement;
+  _binding?: DirectiveBinding;
+  _hide_timeout?: number;
+  _auto_update_cleanup?: () => void;
+  _remove_event_listeners?: () => void;
+};
+
+function get_transform_origin(placement: string): string {
+  const [side, align] = placement.split("-");
+
+  let origin_x = "center";
+  let origin_y = "center";
+
+  if (side === "top") origin_y = "bottom";
+  if (side === "bottom") origin_y = "top";
+  if (side === "left") origin_x = "right";
+  if (side === "right") origin_x = "left";
+
+  if (align === "start") {
+    if (side === "top" || side === "bottom") origin_x = "left";
+    else origin_y = "top";
+  } else if (align === "end") {
+    if (side === "top" || side === "bottom") origin_x = "right";
+    else origin_y = "bottom";
+  }
+
+  return `${origin_y} ${origin_x}`.trim();
 }
 
 export function createPop(
-  globalOptions?: Partial<PopOptions>
+  global_options?: Partial<PopOptions>,
 ): ObjectDirective {
-  // Sloučíme výchozí hodnoty s těmi od uživatele
-  // Uživatelovy hodnoty mají přednost
-  const finalOptions: PopOptions = {
-    ...defaultOptions,
-    ...globalOptions,
-  }
+  const final_options: PopOptions = {
+    ...default_options,
+    ...global_options,
+  };
 
   return {
     mounted(el: ElWithPopover, binding: DirectiveBinding) {
-      const placement = (binding.arg || 'top') as Placement
-      const origin: Origin = origins[placement] || 'top'
-      const { click, leave } = binding.modifiers
-      el._binding = binding
+      const placement = (binding.arg || "top") as Placement;
+      const { click, leave } = binding.modifiers;
+      el._binding = binding;
 
-      const createPopover = () => {
-        const popover = document.createElement('div')
-        const content = unwrap(el._binding?.value)
-        if (!content.trim()) return
+      const create_popover = () => {
+        const popover = document.createElement("div");
+        const content = unwrap(el._binding?.value);
+        if (!content.trim()) return;
+
         if (el._binding?.modifiers.html) {
-          popover.innerHTML = content
+          popover.innerHTML = content;
         } else {
-          popover.textContent = content
+          popover.textContent = content;
           popover.style.cssText += `
-            font-family: ${finalOptions.fontFamily};
-            background-color: ${finalOptions.backgroundColor};
-            backdrop-filter: blur(${finalOptions.blur}px);
-            color: ${finalOptions.color};
-            border-radius: ${finalOptions.borderRadius}px;
-            border: 1px solid ${finalOptions.borderColor};
-            padding: ${finalOptions.paddingY} ${finalOptions.paddingX}px;
-          `
+            font-family: ${final_options.fontFamily};
+            background-color: ${final_options.backgroundColor};
+            backdrop-filter: blur(${final_options.blur}px);
+            color: ${final_options.color};
+            border-radius: ${final_options.borderRadius}px;
+            border: 1px solid ${final_options.borderColor};
+            padding: ${final_options.paddingY}px ${final_options.paddingX}px;
+          `;
         }
+
         popover.style.cssText += `
-          transition: opacity ${finalOptions.duration}s, transform ${finalOptions.duration}s;
+          transition: opacity ${final_options.duration}s, transform ${final_options.duration}s;
           opacity: 0;
-          transform: scale(${finalOptions.scaleStart});
-          transform-origin: ${origin};
+          transform: scale(${final_options.scaleStart});
+          transform-origin: ${get_transform_origin(placement)};
           pointer-events: none;
           position: absolute;
-          font-size: ${finalOptions.fontSize}px;
+          font-size: ${final_options.fontSize}px;
           z-index: 999;
           max-width: 42rem;
           display: inline-block;
-        `
-        document.body.appendChild(popover)
-        el._popover = popover
-      }
+          user-select: none;
+        `;
+        document.body.appendChild(popover);
+        el._popover = popover;
+      };
 
-      const showPopover = () => {
-        const content = unwrap(el._binding?.value)
-        if (!content.trim()) return
-        if (el._hideTimeout) clearTimeout(el._hideTimeout)
-        if (!el._popover) createPopover()
-        const popover = el._popover!
+      const show_popover = () => {
+        const content = unwrap(el._binding?.value);
+        if (!content.trim()) return;
+
+        if (el._hide_timeout) clearTimeout(el._hide_timeout);
+        if (!el._popover) create_popover();
+
+        const popover = el._popover!;
         if (el._binding?.modifiers.html) {
-          popover.innerHTML = content
+          popover.innerHTML = content;
         } else {
-          popover.textContent = content
+          popover.textContent = content;
         }
 
         computePosition(el, popover, {
           placement,
           middleware: [offset(8), flip(), shift({ padding: 8 })],
-        }).then(({ x, y, placement }) => {
-          popover.style.top = `${y}px`
-          popover.style.left = `${x}px`
-          popover.style.transformOrigin = origins[placement] || 'top'
-        })
+        }).then(({ x, y, placement: new_placement }) => {
+          popover.style.top = `${y}px`;
+          popover.style.left = `${x}px`;
+          popover.style.transformOrigin = get_transform_origin(new_placement);
+        });
 
         requestAnimationFrame(() => {
-          popover.style.opacity = '1'
-          popover.style.transform = 'scale(1)'
-        })
+          popover.style.opacity = "1";
+          popover.style.transform = "scale(1)";
+        });
 
-        el._autoUpdateCleanup = autoUpdate(el, popover, () => {
+        el._auto_update_cleanup = autoUpdate(el, popover, () => {
           computePosition(el, popover, {
             placement,
             middleware: [offset(8), flip(), shift({ padding: 8 })],
-          }).then(({ x, y, placement }) => {
-            popover.style.top = `${y}px`
-            popover.style.left = `${x}px`
-            popover.style.transformOrigin = origins[placement] || 'top'
-          })
-        })
-      }
+          }).then(({ x, y, placement: updated_placement }) => {
+            popover.style.top = `${y}px`;
+            popover.style.left = `${x}px`;
+            popover.style.transformOrigin =
+              get_transform_origin(updated_placement);
+          });
+        });
+      };
 
-      const hidePopover = () => {
-        if (!el._popover) return
-        const popover = el._popover
-        popover.style.opacity = '0'
-        popover.style.transform = `scale(${finalOptions.scaleStart})`
-        if (el._autoUpdateCleanup) {
-          el._autoUpdateCleanup()
-          el._autoUpdateCleanup = undefined
+      const hide_popover = () => {
+        if (!el._popover) return;
+        const popover = el._popover;
+        popover.style.opacity = "0";
+        popover.style.transform = `scale(${final_options.scaleStart})`;
+
+        if (el._auto_update_cleanup) {
+          el._auto_update_cleanup();
+          el._auto_update_cleanup = undefined;
         }
-        el._hideTimeout = window.setTimeout(() => {
-          popover.remove()
-          el._popover = undefined
-        }, finalOptions.duration * 1000)
-      }
 
-      const clickHandler = () => {
+        el._hide_timeout = window.setTimeout(() => {
+          popover.remove();
+          el._popover = undefined;
+        }, final_options.duration * 1000);
+      };
+
+      const click_handler = () => {
         if (el._popover) {
-          hidePopover()
+          hide_popover();
         } else {
-          showPopover()
+          show_popover();
         }
-      }
+      };
 
       if (!click) {
-        el.addEventListener('mouseenter', showPopover)
+        el.addEventListener("mouseenter", show_popover);
       } else {
-        el.addEventListener('click', clickHandler)
+        el.addEventListener("click", click_handler);
       }
       if (!click || leave) {
-        el.addEventListener('mouseleave', hidePopover)
+        el.addEventListener("mouseleave", hide_popover);
       }
 
-      el._removeEventListeners = () => {
-        el.removeEventListener('mouseenter', showPopover)
-        el.removeEventListener('mouseleave', hidePopover)
-        el.removeEventListener('click', clickHandler)
-      }
+      el._remove_event_listeners = () => {
+        el.removeEventListener("mouseenter", show_popover);
+        el.removeEventListener("mouseleave", hide_popover);
+        el.removeEventListener("click", click_handler);
+      };
     },
 
     updated(el: ElWithPopover, binding: DirectiveBinding) {
-      el._binding = binding
-      const content = unwrap(binding.value)
-      const isEmpty = !content.trim()
+      el._binding = binding;
+      const content = unwrap(binding.value);
+      const is_empty = !content.trim();
 
       if (el._popover) {
-        if (isEmpty) {
-          // nový obsah je prázdný → schovej tooltip
-          el._popover.remove()
-          el._popover = undefined
-          if (el._autoUpdateCleanup) {
-            el._autoUpdateCleanup()
-            el._autoUpdateCleanup = undefined
+        if (is_empty) {
+          el._popover.remove();
+          el._popover = undefined;
+          if (el._auto_update_cleanup) {
+            el._auto_update_cleanup();
+            el._auto_update_cleanup = undefined;
           }
         } else {
-          // aktualizuj obsah
           if (binding.modifiers.html) {
-            el._popover.innerHTML = content
+            el._popover.innerHTML = content;
           } else {
-            el._popover.textContent = content
+            el._popover.textContent = content;
           }
         }
-      } else if (!isEmpty) {
-        // tooltip je skrytý, ale nový obsah není prázdný → zobraz, pokud je kurzor nad elementem
-        if (!binding.modifiers.click && el.matches(':hover')) {
-          // manuálně zavolej showPopover
-          const event = new Event('mouseenter')
-          el.dispatchEvent(event)
+      } else if (!is_empty) {
+        if (!binding.modifiers.click && el.matches(":hover")) {
+          const event = new Event("mouseenter");
+          el.dispatchEvent(event);
         }
       }
     },
 
     beforeUnmount(el: ElWithPopover) {
-      el._removeEventListeners?.()
+      el._remove_event_listeners?.();
       if (el._popover) {
-        el._popover.remove()
-        el._popover = undefined
+        el._popover.remove();
+        el._popover = undefined;
       }
-      if (el._hideTimeout) {
-        clearTimeout(el._hideTimeout)
+      if (el._hide_timeout) {
+        clearTimeout(el._hide_timeout);
       }
     },
-  }
+  };
 }
