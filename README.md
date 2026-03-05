@@ -29,6 +29,7 @@ Drop it into your Vue template easily:
 - 🎁 **tiny - only 1 dependency:** [@floating-ui/dom](https://www.npmjs.com/package/@floating-ui/dom) [(web)](https://floating-ui.com)
 - ✨ Auto-flipping + positioning with `top`, `bottom-start`, `right-end`, etc.
 - ⚡ Supports reactive values, `ref`, `computed`, functions
+- - 🚀 **Zero-lag HTML Popovers:** `.html` tooltips are pre-rendered and kept in the DOM, making images and complex content appear instantly without network or render lag.
 - 🧩 Optional HTML/image mode via `.html`
 
 ---
@@ -77,7 +78,8 @@ You can control the placement using directive arguments (e.g., `v-pop:right`):
 | **`-end`** suffix | Aligns tooltip to the end of the element | `v-pop:right-end="'Text'"` |
 
 ### Behavior Modifiers
-- **`.html`** – interpret value as raw HTML (e.g. images or rich markup)
+- **`.html`** – interpret value as raw HTML (e.g., images or rich markup). 
+  *⚡ **Performance Note:** To guarantee instant responsiveness, `.html` popovers are pre-rendered upon component mount and persistently kept in the DOM (hidden via CSS). This eliminates layout shifts and prevents network lag when hovering over elements with images.*
 - **`.click`** – shows the tooltip on click instead of hover
 - **`.leave`** – hides the tooltip on mouseleave (only useful with `.click`)
 
