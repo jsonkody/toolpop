@@ -49,9 +49,16 @@ npm install toolpop
 ```ts
 // main.ts
 import Toolpop from 'toolpop'
-// ...
-app.use(Toolpop)
+
 // Registers v-pop globally with default options
+app.use(Toolpop)
+
+// Or register with custom options
+// (See the "Options" section below for the full list of available properties):
+app.use(Toolpop, { 
+  color: 'red', 
+  fontSize: 16 
+})
 ```
 
 ### ✒️ Use as Directive
