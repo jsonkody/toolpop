@@ -36,24 +36,40 @@ const default_options: PopOptions = {
   blur: 14,
 };
 
-function unwrap(val: any): string {
-  if (typeof val === "function") {
-    return unwrap(val());
-  }
-  if (typeof val === "object" && val !== null && "value" in val) {
-    return unwrap(val.value);
-  }
-  return String(val ?? "");
-}
-
 type ElWithPopover = HTMLElement & {
   _popover?: HTMLDivElement;
   _binding?: DirectiveBinding;
+  _placement?: Placement;
   _hide_timeout?: number;
   _auto_update_cleanup?: () => void;
   _remove_event_listeners?: () => void;
   _create_popover?: () => void;
+  _show_popover?: () => void;
+  _hide_popover?: () => void;
+  _is_visible?: boolean;
 };
+
+let active_el: ElWithPopover | undefined;
+let document_listeners_active = false;
+
+function unwrap(val: any): string {
+  if (typeof val === "function") {
+    return unwrap(val());
+  }
+
+  if (typeof val === "object" && val !== null && "value" in val) {
+    return unwrap(val.value);
+  }
+
+  return String(val ?? "");
+}
+
+function can_hover(): boolean {
+  if (typeof window === "undefined") return false;
+  if (!window.matchMedia) return false;
+
+  return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+}
 
 function get_transform_origin(placement: string): string {
   const [side, align] = placement.split("-");
@@ -77,21 +93,85 @@ function get_transform_origin(placement: string): string {
   return `${origin_y} ${origin_x}`.trim();
 }
 
-const compute_position = (
+function compute_position(
   el: ElWithPopover,
   popover: HTMLDivElement | undefined,
   placement: Placement,
-) => {
-  if (!popover) return;
-  computePosition(el, popover, {
+): Promise<void> {
+  if (!popover) return Promise.resolve();
+
+  return computePosition(el, popover, {
     placement,
     middleware: [offset(8), flip(), shift({ padding: 8 })],
   }).then(({ x, y, placement: new_placement }) => {
+    if (el._popover !== popover) return;
+
     popover.style.top = `${y}px`;
     popover.style.left = `${x}px`;
     popover.style.transformOrigin = get_transform_origin(new_placement);
   });
-};
+}
+
+function handle_document_pointerdown(event: PointerEvent) {
+  if (!active_el) return;
+
+  const target = event.target;
+  if (!(target instanceof Node)) return;
+
+  const popover = active_el._popover;
+
+  if (active_el.contains(target)) return;
+  if (popover?.contains(target)) return;
+
+  active_el._hide_popover?.();
+}
+
+function handle_document_keydown(event: KeyboardEvent) {
+  if (event.key !== "Escape") return;
+
+  active_el?._hide_popover?.();
+}
+
+function ensure_document_listeners() {
+  if (document_listeners_active) return;
+  if (typeof document === "undefined") return;
+
+  document.addEventListener("pointerdown", handle_document_pointerdown, true);
+  document.addEventListener("keydown", handle_document_keydown);
+
+  document_listeners_active = true;
+}
+
+function cleanup_document_listeners() {
+  if (!document_listeners_active) return;
+  if (active_el) return;
+  if (typeof document === "undefined") return;
+
+  document.removeEventListener(
+    "pointerdown",
+    handle_document_pointerdown,
+    true,
+  );
+  document.removeEventListener("keydown", handle_document_keydown);
+
+  document_listeners_active = false;
+}
+
+function set_active_el(el: ElWithPopover) {
+  if (active_el && active_el !== el) {
+    active_el._hide_popover?.();
+  }
+
+  active_el = el;
+  ensure_document_listeners();
+}
+
+function clear_active_el(el: ElWithPopover) {
+  if (active_el !== el) return;
+
+  active_el = undefined;
+  cleanup_document_listeners();
+}
 
 export function createPop(
   global_options?: Partial<PopOptions>,
@@ -100,17 +180,26 @@ export function createPop(
 
   return {
     mounted(el: ElWithPopover, binding: DirectiveBinding) {
-      const placement = (binding.arg || "top") as Placement;
-      const { click, leave, html } = binding.modifiers;
       el._binding = binding;
+      el._placement = (binding.arg || "top") as Placement;
+
+      const { click, touch, outside, html } = binding.modifiers;
+
+      const hover_supported = can_hover();
+      const uses_click_trigger = click || (touch && !hover_supported);
+      const uses_hover_trigger = !uses_click_trigger && hover_supported;
+
+      const uses_outside_manager =
+        uses_click_trigger && (outside || !hover_supported);
 
       const create_popover = () => {
         if (el._popover) return;
+
         const content = unwrap(el._binding?.value);
 
-        // Povolíme vytvoření prázdného HTML divu, aby mohl sedět v DOMu
         if (!content.trim() && !html) return;
 
+        const placement = el._placement ?? "top";
         const popover = document.createElement("div");
 
         if (html) {
@@ -141,14 +230,10 @@ export function createPop(
           display: none;
           user-select: none;
         `;
+
         document.body.appendChild(popover);
         el._popover = popover;
-
-        if (html) compute_position(el, popover, placement);
       };
-
-      el._create_popover = create_popover;
-      if (html) create_popover();
 
       const show_popover = () => {
         const content = unwrap(el._binding?.value);
@@ -165,30 +250,46 @@ export function createPop(
         }
 
         if (!el._popover) create_popover();
-        const popover = el._popover!;
+        if (!el._popover) return;
+
+        const popover = el._popover;
+        const placement = el._placement ?? "top";
 
         if (html) popover.innerHTML = content;
         else popover.textContent = content;
 
         popover.style.display = "inline-block";
-        compute_position(el, popover, placement);
+        el._is_visible = true;
+
+        compute_position(el, popover, placement).then(() => {
+          requestAnimationFrame(() => {
+            if (el._popover !== popover) return;
+            if (!el._is_visible) return;
+
+            popover.style.opacity = "1";
+            popover.style.transform = "scale(1)";
+          });
+        });
 
         el._auto_update_cleanup = autoUpdate(el, popover, () => {
           compute_position(el, popover, placement);
         });
 
-        requestAnimationFrame(() => {
-          popover.style.opacity = "1";
-          popover.style.transform = "scale(1)";
-        });
+        if (uses_outside_manager) {
+          set_active_el(el);
+        }
       };
 
       const hide_popover = () => {
+        clear_active_el(el);
+
         if (!el._popover || el._hide_timeout) return;
+
         const popover = el._popover;
 
         popover.style.opacity = "0";
         popover.style.transform = `scale(${final_options.scaleStart})`;
+        el._is_visible = false;
 
         if (el._auto_update_cleanup) {
           el._auto_update_cleanup();
@@ -200,76 +301,153 @@ export function createPop(
             popover.style.display = "none";
           } else {
             popover.remove();
-            el._popover = undefined;
+
+            if (el._popover === popover) {
+              el._popover = undefined;
+            }
           }
+
           el._hide_timeout = undefined;
         }, final_options.duration * 1000);
       };
 
-      const click_handler = () => {
-        if (el._popover && el._popover.style.opacity === "1") hide_popover();
+      const focus_handler = () => {
+        if (!el.matches(":focus-visible")) return;
+
+        show_popover();
+      };
+
+      const blur_handler = () => {
+        hide_popover();
+      };
+
+      const toggle_handler = () => {
+        if (el._is_visible) hide_popover();
         else show_popover();
       };
 
-      if (!click) el.addEventListener("mouseenter", show_popover);
-      else el.addEventListener("click", click_handler);
-      if (!click || leave) el.addEventListener("mouseleave", hide_popover);
+      el._create_popover = create_popover;
+      el._show_popover = show_popover;
+      el._hide_popover = hide_popover;
+
+      if (html) {
+        create_popover();
+      }
+
+      if (uses_click_trigger) {
+        el.addEventListener("click", toggle_handler);
+
+        if (hover_supported && !outside) {
+          el.addEventListener("mouseleave", hide_popover);
+        }
+      } else if (uses_hover_trigger) {
+        el.addEventListener("mouseenter", show_popover);
+        el.addEventListener("mouseleave", hide_popover);
+      }
+
+      if (!uses_click_trigger) {
+        el.addEventListener("focus", focus_handler);
+        el.addEventListener("blur", blur_handler);
+      }
 
       el._remove_event_listeners = () => {
+        el.removeEventListener("click", toggle_handler);
         el.removeEventListener("mouseenter", show_popover);
         el.removeEventListener("mouseleave", hide_popover);
-        el.removeEventListener("click", click_handler);
+        el.removeEventListener("focus", focus_handler);
+        el.removeEventListener("blur", blur_handler);
       };
     },
 
     updated(el: ElWithPopover, binding: DirectiveBinding) {
       el._binding = binding;
-      const { html, click } = binding.modifiers;
+      el._placement = (binding.arg || "top") as Placement;
+
+      const { html, click, touch } = binding.modifiers;
       const content = unwrap(binding.value);
       const is_empty = !content.trim();
 
+      const hover_supported = can_hover();
+      const uses_click_trigger = click || (touch && !hover_supported);
+      const uses_hover_trigger = !uses_click_trigger && hover_supported;
+
       if (el._popover) {
         if (is_empty) {
+          clear_active_el(el);
+
           if (el._auto_update_cleanup) {
             el._auto_update_cleanup();
             el._auto_update_cleanup = undefined;
           }
+
+          if (el._hide_timeout) {
+            clearTimeout(el._hide_timeout);
+            el._hide_timeout = undefined;
+          }
+
+          el._is_visible = false;
+          el._popover.style.opacity = "0";
+
           if (html) {
             el._popover.style.display = "none";
-            el._popover.style.opacity = "0";
           } else {
             el._popover.remove();
             el._popover = undefined;
           }
-        } else {
-          if (html) el._popover.innerHTML = content;
-          else el._popover.textContent = content;
 
-          if (
-            el._popover.style.display === "none" &&
-            !click &&
-            el.matches(":hover")
-          ) {
-            el.dispatchEvent(new Event("mouseenter"));
-          }
+          return;
         }
-      } else if (!is_empty) {
-        if (html && el._create_popover) el._create_popover();
 
-        if (!click && el.matches(":hover")) {
-          el.dispatchEvent(new Event("mouseenter"));
+        if (html) el._popover.innerHTML = content;
+        else el._popover.textContent = content;
+
+        if (el._is_visible) {
+          compute_position(el, el._popover, el._placement ?? "top");
         }
+
+        if (
+          el._popover.style.display === "none" &&
+          uses_hover_trigger &&
+          el.matches(":hover")
+        ) {
+          el._show_popover?.();
+        }
+
+        return;
+      }
+
+      if (is_empty) return;
+
+      if (html && el._create_popover) {
+        el._create_popover();
+      }
+
+      if (uses_hover_trigger && el.matches(":hover")) {
+        el._show_popover?.();
       }
     },
 
     beforeUnmount(el: ElWithPopover) {
       el._remove_event_listeners?.();
-      if (el._auto_update_cleanup) el._auto_update_cleanup();
-      if (el._hide_timeout) clearTimeout(el._hide_timeout);
+
+      clear_active_el(el);
+
+      if (el._auto_update_cleanup) {
+        el._auto_update_cleanup();
+        el._auto_update_cleanup = undefined;
+      }
+
+      if (el._hide_timeout) {
+        clearTimeout(el._hide_timeout);
+        el._hide_timeout = undefined;
+      }
+
       if (el._popover) {
         el._popover.remove();
         el._popover = undefined;
       }
+
+      el._is_visible = false;
     },
   };
 }
